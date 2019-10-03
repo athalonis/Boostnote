@@ -23,7 +23,7 @@ const dataApi = {
   fetchSnippet: require('./fetchSnippet'),
   exportTag: require('./exportTag'),
   getFilename: require('./getFilename'),
-
+  gitRepo: require('./gitRepo'),
   _migrateFromV6Storage: require('./migrateFromV6Storage'),
   _resolveStorageData: require('./resolveStorageData'),
   _resolveStorageNotes: require('./resolveStorageNotes')

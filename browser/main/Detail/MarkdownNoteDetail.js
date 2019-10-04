@@ -7,6 +7,7 @@ import MarkdownEditor from 'browser/components/MarkdownEditor'
 import MarkdownSplitEditor from 'browser/components/MarkdownSplitEditor'
 import TodoListPercentage from 'browser/components/TodoListPercentage'
 import StarButton from './StarButton'
+import SyncButton from './SyncButton'
 import TagSelect from './TagSelect'
 import FolderSelect from './FolderSelect'
 import dataApi from 'browser/main/lib/dataApi'
@@ -38,16 +39,20 @@ class MarkdownNoteDetail extends React.Component {
   constructor(props) {
     super(props)
 
+    const storageList = JSON.parse(localStorage.getItem('storages'))
+    const storage = _.find(storageList, {key: this.props.note.storage})
+
     this.state = {
       isMovingNote: false,
-      note: Object.assign(
-        {
-          title: '',
-          content: '',
-          linesHighlighted: []
-        },
-        props.note
-      ),
+      note: Object.assign({
+        title: '',
+        content: '',
+        linesHighlighted: []
+      }, props.note),
+      storage,
+      interval: null,
+      isManualGitFile: storage && storage.type === 'GITREPO' && !storage.options.autoSync,
+      isOutOfSync: false,
       isLockButtonShown: props.config.editor.type !== 'SPLIT',
       isLocked: false,
       editorType: props.config.editor.type,
@@ -79,6 +84,27 @@ class MarkdownNoteDetail extends React.Component {
     })
     ee.on('hotkey:deletenote', this.handleDeleteNote.bind(this))
     ee.on('code:generate-toc', this.generateToc)
+
+    const interval = setInterval(() => {
+      const storageList = JSON.parse(localStorage.getItem('storages'))
+      const storage = _.find(storageList, {key: this.state.note.storage})
+      this.setState({
+        storage: storage,
+        isManualGitFile: (storage && storage.type === 'GITREPO' &&
+              storage.options && !storage.options.autoSync)
+      })
+
+      if (this.state.isManualGitFile) {
+        dataApi.gitStorage.isFileSynced(this.state.storage.path, this.state.note.key)
+          .then((isSynced) => this.setState({isOutOfSync: !isSynced}))
+      } else {
+        this.setState({
+          isOutOfSync: false
+        })
+      }
+    }, 3 * 1000)
+
+    this.setState({interval: interval})
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -113,7 +139,13 @@ class MarkdownNoteDetail extends React.Component {
     }
   }
 
+<<<<<<< HEAD
   componentWillUnmount() {
+=======
+  componentWillUnmount () {
+    clearInterval(this.state.interval)
+
+>>>>>>> 0cc9aef6... Adds manual git syncing
     ee.off('topbar:togglelockbutton', this.toggleLockButton)
     ee.on('topbar:toggledirectionbutton', this.handleSwitchDirection)
     ee.off('code:generate-toc', this.generateToc)
@@ -192,6 +224,7 @@ class MarkdownNoteDetail extends React.Component {
               originNote: note,
               note: newNote
             })
+<<<<<<< HEAD
             dispatch(
               replace({
                 pathname: location.pathname,
@@ -205,6 +238,15 @@ class MarkdownNoteDetail extends React.Component {
             })
           }
         )
+=======
+          }))
+
+          this.setState({
+            isMovingNote: false
+
+          })
+        })
+>>>>>>> 0cc9aef6... Adds manual git syncing
       })
   }
 
@@ -533,7 +575,43 @@ class MarkdownNoteDetail extends React.Component {
           />
         </div>
       </div>
+<<<<<<< HEAD
     )
+=======
+      <div styleName='info-right'>
+        {
+          this.state.isManualGitFile && this.state.isOutOfSync &&
+          <SyncButton
+            onClick={(e) => dataApi.gitStorage.syncGitFile(this.state.storage.path, this.state.note.key)}
+          />
+        }
+        <ToggleModeButton onClick={(e) => this.handleSwitchMode(e)} editorType={editorType} />
+
+        <StarButton
+          onClick={(e) => this.handleStarButtonClick(e)}
+          isActive={note.isStarred}
+        />
+
+        {(() => {
+          const imgSrc = `${this.getToggleLockButton()}`
+          const lockButtonComponent =
+            <button styleName='control-lockButton'
+              onFocus={(e) => this.handleFocus(e)}
+              onMouseDown={(e) => this.handleLockButtonMouseDown(e)}
+            >
+              <img src={imgSrc} />
+              {this.state.isLocked ? <span styleName='tooltip'>Unlock</span> : <span styleName='tooltip'>Lock</span>}
+            </button>
+
+          return (
+            this.state.isLockButtonShown ? lockButtonComponent : ''
+          )
+        })()}
+
+        <FullscreenButton onClick={(e) => this.handleFullScreenButton(e)} />
+
+        <TrashButton onClick={(e) => this.handleTrashButtonClick(e)} />
+>>>>>>> 0cc9aef6... Adds manual git syncing
 
     const detailTopBar = (
       <div styleName='info'>

@@ -139,13 +139,8 @@ class MarkdownNoteDetail extends React.Component {
     }
   }
 
-<<<<<<< HEAD
-  componentWillUnmount() {
-=======
   componentWillUnmount () {
     clearInterval(this.state.interval)
-
->>>>>>> 0cc9aef6... Adds manual git syncing
     ee.off('topbar:togglelockbutton', this.toggleLockButton)
     ee.on('topbar:toggledirectionbutton', this.handleSwitchDirection)
     ee.off('code:generate-toc', this.generateToc)
@@ -224,7 +219,6 @@ class MarkdownNoteDetail extends React.Component {
               originNote: note,
               note: newNote
             })
-<<<<<<< HEAD
             dispatch(
               replace({
                 pathname: location.pathname,
@@ -238,15 +232,6 @@ class MarkdownNoteDetail extends React.Component {
             })
           }
         )
-=======
-          }))
-
-          this.setState({
-            isMovingNote: false
-
-          })
-        })
->>>>>>> 0cc9aef6... Adds manual git syncing
       })
   }
 
@@ -575,9 +560,6 @@ class MarkdownNoteDetail extends React.Component {
           />
         </div>
       </div>
-<<<<<<< HEAD
-    )
-=======
       <div styleName='info-right'>
         {
           this.state.isManualGitFile && this.state.isOutOfSync &&
@@ -611,7 +593,6 @@ class MarkdownNoteDetail extends React.Component {
         <FullscreenButton onClick={(e) => this.handleFullScreenButton(e)} />
 
         <TrashButton onClick={(e) => this.handleTrashButtonClick(e)} />
->>>>>>> 0cc9aef6... Adds manual git syncing
 
     const detailTopBar = (
       <div styleName='info'>
